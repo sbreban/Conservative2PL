@@ -111,6 +111,12 @@ public class TransactionManager {
 
         int currentOperation = transactionOperationPointer.get(thisWillRun);
         System.out.println("This operation will run " + transactionOperations.get(thisWillRun).get(currentOperation));
+        Operation operation = transactionOperations.get(thisWillRun).get(currentOperation);
+
+        if (operation.getInstruction().equals("R") && operation.getVariable().getId() == 5) {
+          AirlinesManager airlinesManager = new AirlinesManager();
+          airlinesManager.get();
+        }
 
         currentOperation++;
         transactionOperationPointer.put(thisWillRun, currentOperation);
