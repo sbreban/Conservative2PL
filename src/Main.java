@@ -14,12 +14,14 @@ public class Main {
       String sCurrentLine = br.readLine();
       int noTransactions = Integer.parseInt(sCurrentLine);
       List<Integer> transactionPointer = new ArrayList<>(noTransactions);
-      Set<Integer> variable = new HashSet<>();
+      Set<Integer> variables = new HashSet<>();
       Map<Integer, List<Operation>> transactionOperations = new HashMap<>();
       Map<Integer, Integer> transactionTimestamps = new HashMap<>();
       Map<Integer, List<Integer>> timeToTransactions = new HashMap<>();
+      Map<Integer, Integer> transactionOperationPointer = new HashMap<>();
 
       for (int noTransaction = 0; noTransaction < noTransactions; noTransaction++) {
+        transactionOperationPointer.put(noTransaction, 0);
         sCurrentLine = br.readLine();
         int noInstructions = Integer.parseInt(sCurrentLine.split(" ")[0]);
         int nTime = Integer.parseInt(sCurrentLine.split(" ")[1]);
@@ -32,7 +34,7 @@ public class Main {
           sCurrentLine = br.readLine();
           String instruction = sCurrentLine.split(" ")[0];
           int var = Integer.parseInt(sCurrentLine.split(" ")[1]);
-          variable.add(var);
+          variables.add(var);
           transactionOperations.computeIfAbsent(noTransaction, k -> new ArrayList<>());
           transactionOperations.get(noTransaction).add(new Operation(instruction, var));
         }
@@ -63,10 +65,14 @@ public class Main {
       System.out.println(transactionToWriteSet);
 
       TransactionManager transactionManager = new TransactionManager();
+      transactionManager.setVariables(variables);
       transactionManager.setTimeToTransactions(timeToTransactions);
       transactionManager.setTransactionOperations(transactionOperations);
       transactionManager.setTransactionPointer(transactionPointer);
       transactionManager.setTransactionTimestamps(transactionTimestamps);
+      transactionManager.setTransactionToReadSet(transactionToReadSet);
+      transactionManager.setTransactionToWriteSet(transactionToWriteSet);
+      transactionManager.setTransactionOperationPointer(transactionOperationPointer);
       transactionManager.run();
     } catch (IOException e) {
       e.printStackTrace();
