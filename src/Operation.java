@@ -2,9 +2,9 @@ import java.util.Objects;
 
 public class Operation {
   private String instruction;
-  private int variable;
+  private Variable variable;
 
-  public Operation(String instruction, int variable) {
+  public Operation(String instruction, Variable variable) {
     this.instruction = instruction;
     this.variable = variable;
   }
@@ -17,11 +17,11 @@ public class Operation {
     this.instruction = instruction;
   }
 
-  public int getVariable() {
+  public Variable getVariable() {
     return variable;
   }
 
-  public void setVariable(int variable) {
+  public void setVariable(Variable variable) {
     this.variable = variable;
   }
 
@@ -35,13 +35,12 @@ public class Operation {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Operation operation = (Operation) o;
-    return variable == operation.variable &&
-        Objects.equals(instruction, operation.instruction);
+    return Objects.equals(instruction, operation.instruction) &&
+        Objects.equals(variable, operation.variable);
   }
 
   @Override
   public int hashCode() {
-
     return Objects.hash(instruction, variable);
   }
 }
