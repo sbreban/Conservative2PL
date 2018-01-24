@@ -2,19 +2,22 @@ import java.util.*;
 
 public class TransactionManager {
 
+  private List<Transaction> transactions;
   private Set<Variable> variables;
-  private Map<Transaction, List<Operation>> transactionOperations;
-  private Map<Transaction, Set<Variable>> transactionToReadSet;
-  private Map<Transaction, Set<Variable>> transactionToWriteSet;
-  private Map<Transaction, Integer> transactionTimestamps;
-  private Map<Transaction, Integer> transactionOperationPointer;
-  private Map<Integer, List<Transaction>> timeToTransactions;
   private int systemTime = 0;
   private List<Transaction> ready = new ArrayList<>();
   private List<Transaction> running = new ArrayList<>();
   private List<Transaction> done = new ArrayList<>();
   private Map<Variable, Transaction> writeLocks = new HashMap<>();
   private Map<Variable, List<Transaction>> readLocks = new HashMap<>();
+
+  public List<Transaction> getTransactions() {
+    return transactions;
+  }
+
+  public void setTransactions(List<Transaction> transactions) {
+    this.transactions = transactions;
+  }
 
   public Set<Variable> getVariables() {
     return variables;
@@ -24,63 +27,12 @@ public class TransactionManager {
     this.variables = variables;
   }
 
-  public Map<Transaction, List<Operation>> getTransactionOperations() {
-    return transactionOperations;
-  }
-
-  public void setTransactionOperations(Map<Transaction, List<Operation>> transactionOperations) {
-    this.transactionOperations = transactionOperations;
-  }
-
-  public Map<Transaction, Integer> getTransactionTimestamps() {
-    return transactionTimestamps;
-  }
-
-  public void setTransactionTimestamps(Map<Transaction, Integer> transactionTimestamps) {
-    this.transactionTimestamps = transactionTimestamps;
-  }
-
-  public Map<Integer, List<Transaction>> getTimeToTransactions() {
-    return timeToTransactions;
-  }
-
-  public void setTimeToTransactions(Map<Integer, List<Transaction>> timeToTransactions) {
-    this.timeToTransactions = timeToTransactions;
-  }
-
-  public Map<Transaction, Set<Variable>> getTransactionToReadSet() {
-    return transactionToReadSet;
-  }
-
-  public void setTransactionToReadSet(Map<Transaction, Set<Variable>> transactionToReadSet) {
-    this.transactionToReadSet = transactionToReadSet;
-  }
-
-  public Map<Transaction, Set<Variable>> getTransactionToWriteSet() {
-    return transactionToWriteSet;
-  }
-
-  public void setTransactionToWriteSet(Map<Transaction, Set<Variable>> transactionToWriteSet) {
-    this.transactionToWriteSet = transactionToWriteSet;
-  }
-
-  public Map<Transaction, Integer> getTransactionOperationPointer() {
-    return transactionOperationPointer;
-  }
-
-  public void setTransactionOperationPointer(Map<Transaction, Integer> transactionOperationPointer) {
-    this.transactionOperationPointer = transactionOperationPointer;
-  }
-
   public void run() {
+    ready.addAll(transactions);
     while (true) {
-      List<Transaction> transactions = timeToTransactions.get(systemTime);
-      if (transactions != null) {
-        ready.addAll(transactions);
-      }
       for (Transaction transaction : ready) {
-        Set<Variable> read = transactionToReadSet.get(transaction);
-        Set<Variable> write = transactionToWriteSet.get(transaction);
+        Set<Variable> read = transaction.getReadSet();
+        Set<Variable> write = transaction.getWriteSet();
 
         try {
           for (Variable variable : write) {
@@ -100,29 +52,29 @@ public class TransactionManager {
           readLocks.computeIfAbsent(variable, k -> new ArrayList<>());
           readLocks.get(variable).add(transaction);
         }
-        System.out.println("All locks for " + transaction);
+        System.out.println("All locks for " + transaction + " acquired at " + systemTime);
         running.add(transaction);
       }
       ready.removeAll(running);
 
       if (running.size() > 0) {
         Transaction thisWillRun = running.get(0);
-        System.out.println("This will run " + thisWillRun);
+        System.out.println("This will run " + thisWillRun + " at " + systemTime);
 
-        int currentOperation = transactionOperationPointer.get(thisWillRun);
-        System.out.println("This operation will run " + transactionOperations.get(thisWillRun).get(currentOperation));
-        Operation operation = transactionOperations.get(thisWillRun).get(currentOperation);
+        int currentOperation = thisWillRun.getOperationPointer();
+        System.out.println("This operation will run " + thisWillRun.getOperations().get(currentOperation));
+        Operation operation = thisWillRun.getOperations().get(currentOperation);
 
-        if (operation.getInstruction().equals("R") && operation.getVariable().getId() == 5) {
+        if (operation.getInstruction().equals("R") && operation.getVariable().getId().equals("flights")) {
           AirlinesManager airlinesManager = new AirlinesManager();
           airlinesManager.get();
         }
 
         currentOperation++;
-        transactionOperationPointer.put(thisWillRun, currentOperation);
+        thisWillRun.setOperationPointer(currentOperation);
 
-        if (currentOperation > transactionOperations.get(thisWillRun).size() - 1) {
-          System.out.println("All operations run for " + thisWillRun);
+        if (currentOperation > thisWillRun.getOperations().size() - 1) {
+          System.out.println("All operations run for " + thisWillRun + " at " + systemTime);
           for (Variable variable : variables) {
             if (writeLocks.get(variable) != null && writeLocks.get(variable) == thisWillRun) {
               writeLocks.put(variable, null);
@@ -136,7 +88,7 @@ public class TransactionManager {
           System.out.println("All locks released");
         }
       }
-      if (done.size() == transactionOperations.size()) {
+      if (done.size() == transactions.size()) {
         break;
       }
       systemTime++;

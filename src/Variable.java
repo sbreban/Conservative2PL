@@ -1,17 +1,17 @@
 import java.util.Objects;
 
 public class Variable {
-  private int id;
+  private String id;
 
-  public Variable(int id) {
+  public Variable(String id) {
     this.id = id;
   }
 
-  public int getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(String id) {
     this.id = id;
   }
 
@@ -20,7 +20,7 @@ public class Variable {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Variable variable = (Variable) o;
-    return id == variable.id;
+    return id.equals(variable.id);
   }
 
   @Override
