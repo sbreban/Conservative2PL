@@ -71,23 +71,7 @@ public class TransactionManager {
         System.out.println("This operation will run " + thisWillRun.getOperations().get(currentOperation));
         Operation operation = thisWillRun.getOperations().get(currentOperation);
 
-        if (operation.getInstruction().equals("R") && operation.getVariable().getId().equals("flights")) {
-          AirlinesManager airlinesManager = new AirlinesManager();
-          List<Flight> flights = airlinesManager.getAllFlights();
-          System.out.println(flights);
-          airlinesManager.close();
-        } else if (operation.getInstruction().equals("W") && operation.getVariable().getId().equals("route")) {
-          AirlinesManager airlinesManager = new AirlinesManager();
-          Route route = (Route) operation.getParameters();
-          airlinesManager.addRoute(route);
-          airlinesManager.close();
-        } else if (operation.getInstruction().equals("D") && operation.getVariable().getId().equals("route")) {
-          AirlinesManager airlinesManager = new AirlinesManager();
-          StringListParameters parameters = (StringListParameters)operation.getParameters();
-          int routeId = Integer.parseInt(parameters.getParameters().get(0));
-          airlinesManager.removeRoute(routeId);
-          airlinesManager.close();
-        }
+        runOperation(operation);
 
         currentOperation++;
         thisWillRun.setOperationPointer(currentOperation);
@@ -111,6 +95,26 @@ public class TransactionManager {
         break;
       }
       systemTime++;
+    }
+  }
+
+  private void runOperation(Operation operation) {
+    if (operation.getInstruction().equals("R") && operation.getVariable().getId().equals("flights")) {
+      AirlinesManager airlinesManager = new AirlinesManager();
+      List<Flight> flights = airlinesManager.getAllFlights();
+      System.out.println(flights);
+      airlinesManager.close();
+    } else if (operation.getInstruction().equals("W") && operation.getVariable().getId().equals("route")) {
+      AirlinesManager airlinesManager = new AirlinesManager();
+      Route route = (Route) operation.getParameters();
+      airlinesManager.addRoute(route);
+      airlinesManager.close();
+    } else if (operation.getInstruction().equals("D") && operation.getVariable().getId().equals("route")) {
+      AirlinesManager airlinesManager = new AirlinesManager();
+      StringListParameters parameters = (StringListParameters)operation.getParameters();
+      int routeId = Integer.parseInt(parameters.getParameters().get(0));
+      airlinesManager.removeRoute(routeId);
+      airlinesManager.close();
     }
   }
 }
