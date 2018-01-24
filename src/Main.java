@@ -1,3 +1,4 @@
+import airlines.Route;
 import transactionmanager.*;
 
 import java.io.BufferedReader;
@@ -37,11 +38,17 @@ public class Main {
           variables.add(variable);
           Operation operation = new Operation(instruction, variable);
           if (lineElements.length > 2) {
-            List<String> parameters = new ArrayList<>();
+            List<String> stringListParameters = new ArrayList<>();
             for (int parameterIndex = 2; parameterIndex < lineElements.length; parameterIndex++) {
-              parameters.add(lineElements[parameterIndex]);
+              stringListParameters.add(lineElements[parameterIndex]);
             }
-            operation.setParameters(new OperationParameters(parameters));
+            OperationParameter parameter;
+            if (operation.getInstruction().equals("W") && operation.getVariable().getId().equals("route")) {
+              parameter = new Route(Integer.parseInt(stringListParameters.get(0)), stringListParameters.get(1), stringListParameters.get(2));
+            } else {
+              parameter = new StringListParameters(stringListParameters);
+            }
+            operation.setParameters(parameter);
           }
 
           transaction.getOperations().add(operation);
@@ -54,7 +61,7 @@ public class Main {
         Set<Variable> writeSet = new HashSet<>();
 
         for (Operation operation : operations) {
-          if (operation.getInstruction().equals("W")) {
+          if (operation.getInstruction().equals("W") || operation.getInstruction().equals("D")) {
             writeSet.add(operation.getVariable());
           } else if (operation.getInstruction().equals("R")) {
             readSet.add(operation.getVariable());

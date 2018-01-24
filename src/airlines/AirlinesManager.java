@@ -23,7 +23,6 @@ public class AirlinesManager {
     try {
       statement = connection.createStatement();
       statement.setQueryTimeout(30);  // set timeout to 30 sec.
-      //language= SQL
       String query = "SELECT " +
           "  r.id, " +
           "  r.source, " +
@@ -60,6 +59,49 @@ public class AirlinesManager {
       }
     }
     return flights;
+  }
+
+  public void addRoute(Route route) {
+    PreparedStatement statement = null;
+    try {
+      String query = "INSERT INTO routes (id, source, destination) VALUES (?, ?, ?)";
+      statement = connection.prepareStatement(query);
+      statement.setInt(1, route.getId());
+      statement.setString(2, route.getSource());
+      statement.setString(3, route.getDestination());
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (statement != null) {
+          statement.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e);
+      }
+    }
+  }
+
+  public void removeRoute(int routeId) {
+    PreparedStatement statement = null;
+    try {
+      String query = "DELETE FROM routes " +
+          "WHERE id = ?";
+      statement = connection.prepareStatement(query);
+      statement.setInt(1, routeId);
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (statement != null) {
+          statement.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e);
+      }
+    }
   }
 
   public void close() {

@@ -5,9 +5,9 @@ import java.util.Objects;
 public class Operation {
   private String instruction;
   private Variable variable;
-  private OperationParameters parameters;
+  private OperationParameter parameters;
 
-  public Operation(String instruction, Variable variable, OperationParameters parameters) {
+  public Operation(String instruction, Variable variable, StringListParameters parameters) {
     this.instruction = instruction;
     this.variable = variable;
     this.parameters = parameters;
@@ -34,11 +34,11 @@ public class Operation {
     this.variable = variable;
   }
 
-  public OperationParameters getParameters() {
+  public OperationParameter getParameters() {
     return parameters;
   }
 
-  public void setParameters(OperationParameters parameters) {
+  public void setParameters(OperationParameter parameters) {
     this.parameters = parameters;
   }
 

@@ -2,6 +2,7 @@ package transactionmanager;
 
 import airlines.AirlinesManager;
 import airlines.Flight;
+import airlines.Route;
 
 import java.util.*;
 
@@ -74,6 +75,17 @@ public class TransactionManager {
           AirlinesManager airlinesManager = new AirlinesManager();
           List<Flight> flights = airlinesManager.getAllFlights();
           System.out.println(flights);
+          airlinesManager.close();
+        } else if (operation.getInstruction().equals("W") && operation.getVariable().getId().equals("route")) {
+          AirlinesManager airlinesManager = new AirlinesManager();
+          Route route = (Route) operation.getParameters();
+          airlinesManager.addRoute(route);
+          airlinesManager.close();
+        } else if (operation.getInstruction().equals("D") && operation.getVariable().getId().equals("route")) {
+          AirlinesManager airlinesManager = new AirlinesManager();
+          StringListParameters parameters = (StringListParameters)operation.getParameters();
+          int routeId = Integer.parseInt(parameters.getParameters().get(0));
+          airlinesManager.removeRoute(routeId);
           airlinesManager.close();
         }
 

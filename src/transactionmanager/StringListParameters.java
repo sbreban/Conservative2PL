@@ -2,10 +2,10 @@ package transactionmanager;
 
 import java.util.List;
 
-public class OperationParameters {
+public class StringListParameters implements OperationParameter {
   private List<String> parameters;
 
-  public OperationParameters(List<String> parameters) {
+  public StringListParameters(List<String> parameters) {
     this.parameters = parameters;
   }
 
@@ -23,7 +23,7 @@ public class OperationParameters {
 
   @Override
   public String toString() {
-    return "OperationParameters{" +
+    return "StringListParameters{" +
         "parameters=" + parameters +
         '}';
   }
