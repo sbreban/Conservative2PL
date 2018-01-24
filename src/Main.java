@@ -1,3 +1,5 @@
+import transactionmanager.*;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -27,11 +29,21 @@ public class Main {
 
         for (int noInstruction = 0; noInstruction < noInstructions; noInstruction++) {
           sCurrentLine = br.readLine();
-          String instruction = sCurrentLine.split(" ")[0];
-          String var = sCurrentLine.split(" ")[1];
+          String[] lineElements = sCurrentLine.split(" ");
+          String instruction = lineElements[0];
+          String var = lineElements[1];
+
           Variable variable = new Variable(var);
           variables.add(variable);
           Operation operation = new Operation(instruction, variable);
+          if (lineElements.length > 2) {
+            List<String> parameters = new ArrayList<>();
+            for (int parameterIndex = 2; parameterIndex < lineElements.length; parameterIndex++) {
+              parameters.add(lineElements[parameterIndex]);
+            }
+            operation.setParameters(new OperationParameters(parameters));
+          }
+
           transaction.getOperations().add(operation);
         }
       }

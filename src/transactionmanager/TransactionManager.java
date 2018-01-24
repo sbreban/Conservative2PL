@@ -1,3 +1,8 @@
+package transactionmanager;
+
+import airlines.AirlinesManager;
+import airlines.Flight;
+
 import java.util.*;
 
 public class TransactionManager {
@@ -67,7 +72,9 @@ public class TransactionManager {
 
         if (operation.getInstruction().equals("R") && operation.getVariable().getId().equals("flights")) {
           AirlinesManager airlinesManager = new AirlinesManager();
-          airlinesManager.get();
+          List<Flight> flights = airlinesManager.getAllFlights();
+          System.out.println(flights);
+          airlinesManager.close();
         }
 
         currentOperation++;

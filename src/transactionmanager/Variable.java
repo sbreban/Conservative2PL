@@ -1,3 +1,5 @@
+package transactionmanager;
+
 import java.util.Objects;
 
 public class Variable {
